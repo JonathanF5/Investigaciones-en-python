@@ -1,0 +1,36 @@
+Nombre : Jonathan Calvopiña
+Problema : Contaminación en Madrid
+Enlace de los datos: http://www.mambiente.munimadrid.es/opendata/horario.txt
+
+import requests
+url = "http://www.mambiente.munimadrid.es/opendata/horario.txt"
+resp = requests.get(url)
+print(resp)
+<Response [200]>
+
+Esta URL proporciona los datos de las estaciones de medición de la calidad del aire de la ciudad de Madrid. Supongamos que queremos descargar el fichero correspondiente para analizarlo a continuación. Para ello, nos bastará con incluir la biblioteca requests que incluye un método para “pedir” (get) el fichero, que podemos grabar a continuación en nuestro disco duro local:
+
+Path se encuentraen la carpeta investigaciones donde esta la base de datos llamado horario.txt
+
+path = 'INVESTIGACIONES'
+with open(path + 'horario.txt', 'wb') as output:
+    output.write(resp.content)
+
+import matplotlib.pyplot as plt
+import csv
+with open(path + 'horario.txt') as csvfile:
+    readcsv = csv.reader(csvfile, delimiter=',')
+    for row in readcsv:
+        if (row[0]+row[1]+row[2]=='28079004' and row[3]=='12'):
+            plt.title("Óxido de nitrógeno: " + row[8]+"/"+row[7]+"/"+row[6])
+            hora = 0
+            desp = 9
+            vs = []
+            horas = []
+            while hora<=23:
+                if row[desp+2*hora+1]=='V': 
+                    vs.append(row[desp+2*hora])
+                    horas.append(hora)
+                hora +=1
+            plt.plot(horas, vs)
+            plt.show()
